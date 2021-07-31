@@ -3,31 +3,48 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 public class StartMenuUIHandler : MonoBehaviour
+
 {
+    public Text highScoreText;
     public InputField playerNameInput;
-    public static string playerName;
+
     // Start is called before the first frame update
     void Start()
     {
-        playerNameInput.text = playerName;
-        //StartGame();
-    }
+        if(DataManager.Instance != null)
+        {
+            highScoreText.text = $"Best Score : {DataManager.Instance.BestPlayer} : {DataManager.Instance.BestPlayerScore}";
+            this.playerNameInput.text = DataManager.Instance.PlayerName;
 
-    // Update is called once per frame
-    void Update()
-    {
+        }
+       
+
+        
+        
         
     }
 
+   
+
     public void StartGame()
     {
+        DataManager.Instance.PlayerName = playerNameInput.text;
+        DataManager.Instance.SaveData();
         SceneManager.LoadScene(1);
 
     }
 
-    public void SaveName(string newName) {
-        playerName = newName;
+
+    public void Exit() {
+        DataManager.Instance.SaveData();
+        #if UNITY_EDITOR
+        EditorApplication.ExitPlaymode();
+        #else
+        Application.Quit();
+        #endif
     }
 }
